@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -31,6 +32,7 @@
 			font-size: 18px;
 			font-weight: bold;
 		}
+
 		button {
 			margin-top: 15px;
 			padding: 10px 20px;
@@ -42,13 +44,18 @@
 		}
 	</style>
 </head>
+
 <body>
 	<h1>Checkin</h1>
 	<div id="reader"></div>
 	<div id="result">Align your QR Code inside the scanner box...</div>
 	<button onclick="location.reload()">Reset Scanner</button>
-
+	<div id="existance"></div>
+	<br>
+	check manually: <input type="text" id="idinput"> <button onclick="check()">Check</button>
 	<script>
+		var inp = document.getElementById("idinput");
+		var existance = document.getElementById("existance");
 		function onScanSuccess(decodedText) {
 			document.getElementById("result").innerText = "Scanned QR: " + decodedText;
 		}
@@ -57,11 +64,39 @@
 			console.log("Scan error:", errorMessage);
 		}
 
+		async function check() {
+			const data = { id: inp.value };
+			try {
+				const response = await fetch("/verify", {
+					method: 'POST',
+					headers: {
+						'Content-Type': 'application/json',
+					},
+					body: JSON.stringify(data),
+				});
+
+				const resp = await response.json();
+				console.log(resp);
+				if (resp.exists) {
+					existance.innerHTML = `Exists`
+					existance.style.color="green"
+				} else {
+					existance.innerHTML = `Doesnt Exists`
+					existance.style.color="red"
+				}
+
+			} catch (error) {
+				console.error('Error sending request:', error);
+			}
+		}
+
+
 		let html5QrcodeScanner = new Html5QrcodeScanner(
-			"reader", 
+			"reader",
 			{ fps: 10, qrbox: { width: 250, height: 250 } }
 		);
 		html5QrcodeScanner.render(onScanSuccess, onScanError);
 	</script>
 </body>
+
 </html>
