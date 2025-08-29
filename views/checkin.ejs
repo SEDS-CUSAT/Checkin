@@ -52,20 +52,24 @@
 	<button onclick="location.reload()">Reset Scanner</button>
 	<div id="existance"></div>
 	<br>
-	check manually: <input type="text" id="idinput"> <button onclick="check()">Check</button>
+	check manually: <input type="text" id="idinput"> <button onclick="chk()">Check</button>
 	<script>
 		var inp = document.getElementById("idinput");
 		var existance = document.getElementById("existance");
 		function onScanSuccess(decodedText) {
 			document.getElementById("result").innerText = "Scanned QR: " + decodedText;
+			check(decodedText);
 		}
 
 		function onScanError(errorMessage) {
 			console.log("Scan error:", errorMessage);
 		}
 
-		async function check() {
-			const data = { id: inp.value };
+		function chk() {
+			check(inp.value);
+		}
+		async function check(id) {
+			const data = { id };
 			try {
 				const response = await fetch("/verify", {
 					method: 'POST',
