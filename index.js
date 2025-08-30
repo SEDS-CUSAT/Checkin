@@ -22,9 +22,9 @@ app.listen(PORT, () => {
 app.post("/verify", (req, res) => {
 	try {
 		//TODO: to replace with actual database lookup
-		let id = req.body?.id;
+		let id = req.body?.id?.trim();
 		let ids = ["SD_14234", "SD_3452", "SD_39503"];
-		let exists = false
+		let exists = false;
 		if (ids.includes(id)) {
 			exists = true;
 		}
